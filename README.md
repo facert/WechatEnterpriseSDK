@@ -5,9 +5,8 @@ useage:
 
 	1. 配置 conf.py
     
-     	CORPID = "****" # 企业号的corpid
-
-	CORPSECRET = "***" #企业号的corpsecret
+     		CORPID = "****" # 企业号的corpid
+		CORPSECRET = "***" #企业号的corpsecret
 	
 	2.
 		from wechat_sdk import *
