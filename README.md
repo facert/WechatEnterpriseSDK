@@ -3,9 +3,10 @@
 
 useage:
 
-    	1. 配置 conf.py
+	1. 配置 conf.py
     
      	CORPID = "****" # 企业号的corpid
+
 	CORPSECRET = "***" #企业号的corpsecret
 	
 	2.
