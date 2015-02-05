@@ -1,7 +1,7 @@
 # WechatEnterpriseSDK
 微信企业号sdk
 
-useage:
+usage:
 
 	1. 配置 conf.py
     
