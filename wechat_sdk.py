@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import json
 import requests
+from datetime import datetime, timedelta
 from conf import CORPID, CORPSECRET
 
 class ErrorCode(object):
@@ -17,14 +18,30 @@ class WeChatEnterprise(object):
         self.corpsecret = CORPSECRET
         self.agentid = agentid
         self.url_prefix = "https://qyapi.weixin.qq.com/cgi-bin"
-        self.access_token = self.__get_access_token()
+        self.token_valid_time = None
+        self._access_token = self.__get_access_token()
 
-    def __get_access_token(self):
+    @property
+    def access_token(self):
+        if self.token_valid_time and datetime.now() < self.token_valid_time:
+            return self._access_token
+        self.__get_access_token()
+        return self._access_token
+
+    @access_token.setter
+    def access_token(self, value):
+        self._access_token = value
+
+    def __get_access_token(self, force=False):
         # access_token 有效期为 7200秒
-        # todo 缓存access_token
+        if not force and self.token_valid_time and datetime.now() < self.token_valid_time:
+            return self.access_token
+
         url = "%s/gettoken?corpid=%s&corpsecret=%s" % (self.url_prefix, self.corpid, self.corpsecret)
         res = requests.get(url)
         access_token = res.json().get("access_token")
+        self.token_valid_time = datetime.now() + timedelta(seconds=3600)
+        self.access_token = access_token
         return access_token
 
     @staticmethod
@@ -37,7 +54,7 @@ class WeChatEnterprise(object):
             return False, res
 
     def __post(self, url, data):
-        res = requests.post(url, data=json.dumps(data).decode('unicode-escape').encode("utf-8")).json()
+        res = requests.post(url, data=json.dumps(data)).json()
         return self.__response(res)
 
     def __get(self, url):
